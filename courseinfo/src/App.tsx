@@ -14,7 +14,7 @@ const App = () => {
 
   return (
     <>
-      <Header course={course.name} />
+      <Header />
 
       <main>
         <Content parts={course.parts} />

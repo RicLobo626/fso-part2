@@ -1,11 +1,7 @@
-type Props = {
-  course: string;
-};
-
-export const Header = ({ course }: Props) => {
+export const Header = () => {
   return (
     <header>
-      <h1>{course}</h1>
+      <h1>Web Development Curriculum</h1>
     </header>
   );
 };
