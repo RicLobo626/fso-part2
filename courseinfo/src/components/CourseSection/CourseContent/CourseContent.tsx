@@ -5,7 +5,7 @@ type Props = {
   parts: CoursePart[];
 };
 
-export const Content = ({ parts }: Props) => {
+export const CourseContent = ({ parts }: Props) => {
   return (
     <ul>
       {parts.map((part) => (

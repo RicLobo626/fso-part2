@@ -3,5 +3,9 @@ type Props = {
 };
 
 export const Total = ({ total }: Props) => {
-  return <p>Number of exercises {total}</p>;
+  return (
+    <p>
+      Total of <strong>{total}</strong> exercises
+    </p>
+  );
 };
