@@ -2,6 +2,7 @@ import { useState, FormEvent, ChangeEvent, useEffect } from "react";
 import { PersonForm, PersonList, Filter } from "src/components";
 import { Person, PersonFormValues } from "src/types";
 import { getPersons } from "src/services";
+import { createPerson } from "./services/persons";
 
 const App = () => {
   const [filter, setFilter] = useState("");
@@ -26,20 +27,27 @@ const App = () => {
     setFilter(e.target.value);
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formEl = e.currentTarget;
     const formData = new FormData(formEl);
-    const person = Object.fromEntries(formData.entries()) as PersonFormValues;
+    const values = Object.fromEntries(formData.entries()) as PersonFormValues;
 
-    const isNew = !persons.some((p) => p.name === person.name);
+    const isNew = !persons.some(({ name }) => name === values.name);
 
-    if (isNew) {
+    if (!isNew) {
+      window.alert(`${values.name} is already added to phonebook`);
+      return;
+    }
+
+    try {
+      const person = await createPerson(values);
+
       setPersons(persons.concat(person));
       formEl.reset();
-    } else {
-      window.alert(`${person.name} is already added to phonebook`);
+    } catch (e) {
+      console.error("Error creating person", e);
     }
   };
 
