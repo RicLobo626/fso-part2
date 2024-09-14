@@ -1,16 +1,18 @@
 import { useState, FormEvent, ChangeEvent, useEffect } from "react";
-import { PersonForm, PersonList, Filter } from "src/components";
-import { Person, PersonFormValues } from "src/types";
+import { PersonForm, PersonList, Filter, AlertBar } from "src/components";
+import { Person, PersonFormValues, Alert } from "src/types";
 import {
   getPersons,
   createPerson,
   deletePerson,
   updatePerson,
 } from "src/services/persons";
+import "./index.scss";
 
 const App = () => {
   const [filter, setFilter] = useState("");
   const [persons, setPersons] = useState<Person[]>([]);
+  const [alert, setAlert] = useState<Alert>(null);
 
   useEffect(() => {
     (async () => {
@@ -31,6 +33,8 @@ const App = () => {
     setFilter(e.target.value);
   };
 
+  const handleCloseAlert = () => setAlert(null);
+
   const handleDeletePerson = async (person: Person) => {
     if (!window.confirm(`Delete ${person.name}?`)) {
       return;
@@ -39,7 +43,12 @@ const App = () => {
     try {
       await deletePerson(person.id);
       setPersons(persons.filter(({ id }) => id !== person.id));
+      setAlert({ message: `Deleted ${person.name}`, type: "success" });
     } catch (e) {
+      setAlert({
+        message: `${person.name} has already been removed from the server`,
+        type: "error",
+      });
       console.log(`Couldn't delete ${person.name}`, e);
     }
   };
@@ -48,8 +57,10 @@ const App = () => {
     try {
       const createdPerson = await createPerson(body);
       setPersons(persons.concat(createdPerson));
+      setAlert({ message: `Added ${createdPerson.name}`, type: "success" });
     } catch (e) {
       console.error("Error creating person", e);
+      setAlert({ message: `Couldn't create ${body.name}`, type: "error" });
     }
   };
 
@@ -60,8 +71,13 @@ const App = () => {
       setPersons(
         persons.map((p) => (p.id === updatedPerson.id ? updatedPerson : p))
       );
+      setAlert({ message: `Updated ${updatedPerson.name}`, type: "success" });
     } catch (e) {
-      console.log(`Couldn't update ${body.name}`, e);
+      console.log(`Error updating person`, e);
+      setAlert({
+        message: `Couldn't update ${body.name}`,
+        type: "error",
+      });
     }
   };
 
@@ -90,22 +106,29 @@ const App = () => {
   };
 
   return (
-    <main>
-      <section>
-        <h1>Phonebook</h1>
-        <Filter onChange={handleChangeFilter} value={filter} />
-      </section>
+    <>
+      <AlertBar alert={alert} onClose={handleCloseAlert} />
 
-      <section>
-        <h2>Add new</h2>
-        <PersonForm onSubmit={handleSubmit} />
-      </section>
+      <main>
+        <section>
+          <h1>Phonebook</h1>
+          <Filter onChange={handleChangeFilter} value={filter} />
+        </section>
 
-      <section>
-        <h2>Numbers</h2>
-        <PersonList persons={filteredPersons} onDeletePerson={handleDeletePerson} />
-      </section>
-    </main>
+        <section>
+          <h2>Add new</h2>
+          <PersonForm onSubmit={handleSubmit} />
+        </section>
+
+        <section>
+          <h2>Numbers</h2>
+          <PersonList
+            persons={filteredPersons}
+            onDeletePerson={handleDeletePerson}
+          />
+        </section>
+      </main>
+    </>
   );
 };
 
