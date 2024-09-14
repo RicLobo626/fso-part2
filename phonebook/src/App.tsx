@@ -1,6 +1,6 @@
 import { useState, FormEvent, ChangeEvent, useEffect } from "react";
 import { PersonForm, PersonList, Filter } from "src/components";
-import { Person } from "src/types";
+import { Person, PersonFormValues } from "src/types";
 import { getPersons } from "src/services";
 
 const App = () => {
@@ -31,7 +31,7 @@ const App = () => {
 
     const formEl = e.currentTarget;
     const formData = new FormData(formEl);
-    const person = Object.fromEntries(formData.entries()) as Person;
+    const person = Object.fromEntries(formData.entries()) as PersonFormValues;
 
     const isNew = !persons.some((p) => p.name === person.name);
 
