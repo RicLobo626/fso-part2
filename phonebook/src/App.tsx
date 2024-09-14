@@ -1,23 +1,40 @@
 import { useState } from "react";
+import { PersonForm, PersonList } from "./components";
+import { FormEvent } from "react";
+import { Person } from "./types";
 
 const App = () => {
-  const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
-  const [newName, setNewName] = useState("");
+  const [persons, setPersons] = useState<Person[]>([
+    { name: "Arto Hellas", number: "040-123456" },
+  ]);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const person = Object.fromEntries(formData.entries()) as Person;
+
+    const isNew = !persons.some((p) => p.name === person.name);
+
+    if (isNew) {
+      setPersons(persons.concat(person));
+    } else {
+      window.alert(`${person.name} is already added to phonebook`);
+    }
+  };
 
   return (
-    <div>
-      <h2>Phonebook</h2>
-      <form>
-        <div>
-          name: <input />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      ...
-    </div>
+    <main>
+      <section>
+        <h1>Phonebook</h1>
+        <PersonForm onSubmit={handleSubmit} />
+      </section>
+
+      <section>
+        <h2>Numbers</h2>
+        <PersonList persons={persons} />
+      </section>
+    </main>
   );
 };
 
