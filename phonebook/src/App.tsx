@@ -1,7 +1,12 @@
 import { useState, FormEvent, ChangeEvent, useEffect } from "react";
 import { PersonForm, PersonList, Filter } from "src/components";
 import { Person, PersonFormValues } from "src/types";
-import { getPersons, createPerson, deletePerson } from "src/services/persons";
+import {
+  getPersons,
+  createPerson,
+  deletePerson,
+  updatePerson,
+} from "src/services/persons";
 
 const App = () => {
   const [filter, setFilter] = useState("");
@@ -35,7 +40,28 @@ const App = () => {
       await deletePerson(person.id);
       setPersons(persons.filter(({ id }) => id !== person.id));
     } catch (e) {
-      console.log(e);
+      console.log(`Couldn't delete ${person.name}`, e);
+    }
+  };
+
+  const handleCreatePerson = async (body: PersonFormValues) => {
+    try {
+      const createdPerson = await createPerson(body);
+      setPersons(persons.concat(createdPerson));
+    } catch (e) {
+      console.error("Error creating person", e);
+    }
+  };
+
+  const handleUpdatePerson = async (id: Person["id"], body: PersonFormValues) => {
+    try {
+      const updatedPerson = await updatePerson(id, body);
+
+      setPersons(
+        persons.map((p) => (p.id === updatedPerson.id ? updatedPerson : p))
+      );
+    } catch (e) {
+      console.log(`Couldn't update ${body.name}`, e);
     }
   };
 
@@ -46,22 +72,21 @@ const App = () => {
     const formData = new FormData(formEl);
     const values = Object.fromEntries(formData.entries()) as PersonFormValues;
 
-    const isNew = !persons.some(({ name }) => name === values.name);
+    const person = persons.find(({ name }) => name === values.name);
 
-    if (!isNew) {
-      window.alert(`${values.name} is already added to phonebook`);
-      return;
+    if (!person) {
+      handleCreatePerson(values);
+    } else {
+      const isUpdate = window.confirm(
+        `${values.name} is already added to phonebook, replace the old number with a new one?`
+      );
+
+      if (!isUpdate) return;
+
+      handleUpdatePerson(person.id, values);
     }
 
-    try {
-      const person = await createPerson(values);
-
-      setPersons(persons.concat(person));
-
-      formEl.reset();
-    } catch (e) {
-      console.error("Error creating person", e);
-    }
+    formEl.reset();
   };
 
   return (
