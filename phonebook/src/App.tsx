@@ -29,13 +29,15 @@ const App = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
+    const formEl = e.currentTarget;
+    const formData = new FormData(formEl);
     const person = Object.fromEntries(formData.entries()) as Person;
 
     const isNew = !persons.some((p) => p.name === person.name);
 
     if (isNew) {
       setPersons(persons.concat(person));
+      formEl.reset();
     } else {
       window.alert(`${person.name} is already added to phonebook`);
     }
