@@ -1,4 +1,5 @@
 import { Person } from "src/types";
+import { Button } from "src/components";
 
 /*** PersonItem ***/
 
@@ -14,7 +15,7 @@ const PersonItem = ({ person, onDelete }: PersonItemProps) => {
 
   return (
     <li>
-      {person.name} - {person.number} <button onClick={handleDelete}>Delete</button>
+      {person.name} - {person.number} <Button onClick={handleDelete} text="Delete" />
     </li>
   );
 };

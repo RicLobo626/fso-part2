@@ -1,4 +1,5 @@
 import { FormEvent } from "react";
+import { Button } from "src/components";
 
 type Props = {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
@@ -23,7 +24,7 @@ export const PersonForm = ({ onSubmit }: Props) => {
         />
       </div>
 
-      <button type="submit">Add</button>
+      <Button type="submit" text="Add" />
     </form>
   );
 };
