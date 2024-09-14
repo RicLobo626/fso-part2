@@ -15,6 +15,12 @@ export const createPerson = async (person: PersonFormValues) => {
   return data;
 };
 
+export const updatePerson = async (id: Person["id"], person: PersonFormValues) => {
+  const { data } = await axios.put(`${baseURL}/${id}`, person);
+
+  return data;
+};
+
 export const deletePerson = (id: Person["id"]) => {
   return axios.delete(`${baseURL}/${id}`);
 };
