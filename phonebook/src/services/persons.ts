@@ -1,5 +1,5 @@
 import axios from "axios";
-import { PersonFormValues } from "src/types";
+import { Person, PersonFormValues } from "src/types";
 
 const baseURL = "/api/persons";
 
@@ -13,4 +13,8 @@ export const createPerson = async (person: PersonFormValues) => {
   const { data } = await axios.post(baseURL, person);
 
   return data;
+};
+
+export const deletePerson = (id: Person["id"]) => {
+  return axios.delete(`${baseURL}/${id}`);
 };
