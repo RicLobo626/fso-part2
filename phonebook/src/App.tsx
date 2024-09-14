@@ -1,8 +1,7 @@
 import { useState, FormEvent, ChangeEvent, useEffect } from "react";
 import { PersonForm, PersonList, Filter } from "src/components";
 import { Person, PersonFormValues } from "src/types";
-import { getPersons } from "src/services";
-import { createPerson } from "./services/persons";
+import { getPersons, createPerson, deletePerson } from "src/services/persons";
 
 const App = () => {
   const [filter, setFilter] = useState("");
@@ -27,6 +26,19 @@ const App = () => {
     setFilter(e.target.value);
   };
 
+  const handleDeletePerson = async (person: Person) => {
+    if (!window.confirm(`Delete ${person.name}?`)) {
+      return;
+    }
+
+    try {
+      await deletePerson(person.id);
+      setPersons(persons.filter(({ id }) => id !== person.id));
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -45,6 +57,7 @@ const App = () => {
       const person = await createPerson(values);
 
       setPersons(persons.concat(person));
+
       formEl.reset();
     } catch (e) {
       console.error("Error creating person", e);
@@ -55,7 +68,6 @@ const App = () => {
     <main>
       <section>
         <h1>Phonebook</h1>
-
         <Filter onChange={handleChangeFilter} value={filter} />
       </section>
 
@@ -66,7 +78,7 @@ const App = () => {
 
       <section>
         <h2>Numbers</h2>
-        <PersonList persons={filteredPersons} />
+        <PersonList persons={filteredPersons} onDeletePerson={handleDeletePerson} />
       </section>
     </main>
   );
