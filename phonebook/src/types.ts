@@ -5,3 +5,8 @@ export type Person = {
 };
 
 export type PersonFormValues = Omit<Person, "id">;
+
+export type Alert = {
+  message: string;
+  type: "success" | "error";
+} | null;
