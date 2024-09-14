@@ -1,15 +1,22 @@
-import { useState, FormEvent, ChangeEvent } from "react";
-import { PersonForm, PersonList, Filter } from "./components";
-import { Person } from "./types";
+import { useState, FormEvent, ChangeEvent, useEffect } from "react";
+import { PersonForm, PersonList, Filter } from "src/components";
+import { Person } from "src/types";
+import { getPersons } from "src/services";
 
 const App = () => {
   const [filter, setFilter] = useState("");
-  const [persons, setPersons] = useState<Person[]>([
-    { name: "Arto Hellas", number: "040-123456" },
-    { name: "Ada Lovelace", number: "39-44-5323523" },
-    { name: "Dan Abramov", number: "12-43-234345" },
-    { name: "Mary Poppendieck", number: "39-23-6423122" },
-  ]);
+  const [persons, setPersons] = useState<Person[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getPersons();
+        setPersons(data);
+      } catch (e) {
+        console.error("Error fetching persons", e);
+      }
+    })();
+  }, []);
 
   const filteredPersons = persons.filter(({ name }) => {
     return name.toLowerCase().includes(filter.toLowerCase().trim());
