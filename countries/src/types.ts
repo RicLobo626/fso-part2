@@ -15,3 +15,17 @@ export type Country = {
     [code: string]: string;
   };
 };
+
+export type Weather = {
+  name: string;
+  main: {
+    temp: number;
+  };
+  wind: {
+    speed: number;
+  };
+  weather: {
+    icon: string;
+    description: string;
+  }[];
+};
