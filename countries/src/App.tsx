@@ -3,6 +3,8 @@ import { getCountries } from "src/services/countries";
 import { Country, Weather } from "src/types";
 import { FilterResults, Filter } from "src/components";
 import { getWeather } from "./services/weather";
+import { CountryWeather } from "./components/CountryWeather";
+import { CountryInfo } from "./components/CountryInfo";
 
 function App() {
   const [countries, setCountries] = useState<Country[]>([]);
@@ -63,13 +65,18 @@ function App() {
       <main>
         <Filter onFilter={handleFilter} value={filter} />
 
-        {filter && (
+        {!countryToShow && filter && (
           <FilterResults
             countries={filteredCountries}
             onSelectCountry={handleSelectCountry}
-            countryToShow={countryToShow}
-            weather={weather}
           />
+        )}
+
+        {countryToShow && (
+          <>
+            <CountryInfo country={countryToShow} />
+            <CountryWeather weather={weather} />
+          </>
         )}
       </main>
     </>
