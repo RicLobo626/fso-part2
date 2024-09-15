@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
+import { FilterResults, Filter, CountryWeather, CountryInfo } from "src/components";
 import { getCountries } from "src/services/countries";
+import { getWeather } from "src/services/weather";
 import { Country, Weather } from "src/types";
-import { FilterResults, Filter } from "src/components";
-import { getWeather } from "./services/weather";
-import { CountryWeather } from "./components/CountryWeather";
-import { CountryInfo } from "./components/CountryInfo";
 
 function App() {
   const [countries, setCountries] = useState<Country[]>([]);
