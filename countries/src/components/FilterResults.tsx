@@ -1,15 +1,16 @@
-import { Country } from "src/types";
+import { Country, Weather } from "src/types";
 import { Button } from "src/components/Button";
 
-/*** CountryDisplay ***/
+/*** CountryInfo ***/
 
-type CountryDisplayProps = {
+type CountryInfoProps = {
   country: Country;
 };
 
-const CountryDisplay = ({ country }: CountryDisplayProps) => {
+const CountryInfo = ({ country }: CountryInfoProps) => {
+  console.log(country);
   return (
-    <div>
+    <section>
       <h2>{country.name.common}</h2>
 
       <p>Capital: {country.capital[0]}</p>
@@ -23,8 +24,32 @@ const CountryDisplay = ({ country }: CountryDisplayProps) => {
         ))}
       </ul>
 
-      <img src={country.flags.png} className="flag" />
-    </div>
+      <img src={country.flags.png} className="flag" alt={country.flags.alt} />
+    </section>
+  );
+};
+
+/*** CountryWeather ***/
+
+type CountryWeatherProps = {
+  weather: Weather | null;
+};
+
+const CountryWeather = ({ weather }: CountryWeatherProps) => {
+  if (!weather) {
+    return <div>Loading weather...</div>;
+  }
+
+  return (
+    <section>
+      <h3>Weather in {weather.name}</h3>
+      <p>Temperature: {weather.main.temp} Celsius</p>
+      <img
+        src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+        alt={weather.weather[0].description}
+      />
+      <p>Wind: {weather.wind.speed} m/s</p>
+    </section>
   );
 };
 
@@ -49,19 +74,24 @@ const CountryItem = ({ country, onSelect }: CountryItemProps) => {
 
 type FilterResultsProps = {
   countries: Country[];
-  selectedCountry: Country | null;
+  countryToShow: Country | null;
+  weather: Weather | null;
   onSelectCountry: (country: Country) => void;
 };
 
 export const FilterResults = ({
   countries,
   onSelectCountry,
-  selectedCountry,
+  countryToShow,
+  weather,
 }: FilterResultsProps) => {
-  const countryToShow = countries.length === 1 ? countries[0] : selectedCountry;
-
   if (countryToShow) {
-    return <CountryDisplay country={countryToShow} />;
+    return (
+      <>
+        <CountryInfo country={countryToShow} />
+        <CountryWeather weather={weather} />
+      </>
+    );
   }
 
   if (countries.length > 10) {
