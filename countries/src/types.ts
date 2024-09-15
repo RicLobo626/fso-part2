@@ -4,8 +4,12 @@ export type Country = {
   };
   area: number;
   capital: string[];
+  capitalInfo: {
+    latlng: [number, number];
+  };
   flags: {
     png: string;
+    alt: string;
   };
   languages: {
     [code: string]: string;
