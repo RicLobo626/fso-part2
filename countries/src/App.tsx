@@ -5,13 +5,12 @@ import { FilterResults, Filter } from "src/components";
 
 function App() {
   const [countries, setCountries] = useState<Country[]>([]);
+  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [filter, setFilter] = useState("");
 
   const filteredCountries = countries.filter((country) => {
     return country.name.common.toLowerCase().includes(filter.toLowerCase());
   });
-
-  const isFiltering = filter.length > 0;
 
   useEffect(() => {
     (async () => {
@@ -24,7 +23,14 @@ function App() {
     })();
   }, []);
 
-  const handleFilter = (val: string) => setFilter(val);
+  const handleSelectCountry = (country: Country) => {
+    setSelectedCountry(country);
+  };
+
+  const handleFilter = (val: string) => {
+    setFilter(val);
+    setSelectedCountry(null);
+  };
 
   return (
     <>
@@ -35,7 +41,13 @@ function App() {
       <main>
         <Filter onFilter={handleFilter} value={filter} />
 
-        {isFiltering && <FilterResults countries={filteredCountries} />}
+        {filter && (
+          <FilterResults
+            countries={filteredCountries}
+            onSelectCountry={handleSelectCountry}
+            selectedCountry={selectedCountry}
+          />
+        )}
       </main>
     </>
   );

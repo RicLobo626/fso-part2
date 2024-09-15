@@ -1,11 +1,13 @@
 import { Country } from "src/types";
+import { Button } from "src/components/Button";
 
 /*** CountryDisplay ***/
+
 type CountryDisplayProps = {
   country: Country;
 };
 
-export const CountryDisplay = ({ country }: CountryDisplayProps) => {
+const CountryDisplay = ({ country }: CountryDisplayProps) => {
   return (
     <div>
       <h2>{country.name.common}</h2>
@@ -26,12 +28,42 @@ export const CountryDisplay = ({ country }: CountryDisplayProps) => {
   );
 };
 
-/*** FilterResults ***/
-type FilterResultsProps = {
-  countries: Country[];
+/*** CountryItem ***/
+
+type CountryItemProps = {
+  country: Country;
+  onSelect: (country: Country) => void;
 };
 
-export const FilterResults = ({ countries }: FilterResultsProps) => {
+const CountryItem = ({ country, onSelect }: CountryItemProps) => {
+  const handleSelect = () => onSelect(country);
+
+  return (
+    <li key={country.name.common}>
+      {country.name.common} <Button text="Show" onClick={handleSelect} />
+    </li>
+  );
+};
+
+/*** FilterResults ***/
+
+type FilterResultsProps = {
+  countries: Country[];
+  selectedCountry: Country | null;
+  onSelectCountry: (country: Country) => void;
+};
+
+export const FilterResults = ({
+  countries,
+  onSelectCountry,
+  selectedCountry,
+}: FilterResultsProps) => {
+  const countryToShow = countries.length === 1 ? countries[0] : selectedCountry;
+
+  if (countryToShow) {
+    return <CountryDisplay country={countryToShow} />;
+  }
+
   if (countries.length > 10) {
     return <p>Too many matches, specify another filter</p>;
   }
@@ -40,14 +72,14 @@ export const FilterResults = ({ countries }: FilterResultsProps) => {
     return <p>No match found</p>;
   }
 
-  if (countries.length === 1) {
-    return <CountryDisplay country={countries[0]} />;
-  }
-
   return (
     <ul>
       {countries.map((country) => (
-        <li key={country.name.common}>{country.name.common}</li>
+        <CountryItem
+          onSelect={onSelectCountry}
+          country={country}
+          key={country.name.common}
+        />
       ))}
     </ul>
   );
